@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'models/currency.dart';
 import 'screens/rates_screen.dart';
 import 'services/currency_service.dart';
+import 'utils/fonts.dart';
+import 'widgets/rates_header.dart' show lapis;
 
-void main() {
+Future<void> main() async {
+  // runApp'dan oldin async ish qilish uchun Flutter'ni tayyorlaymiz.
+  WidgetsFlutterBinding.ensureInitialized();
+  await loadFonts();
   runApp(const MyApp());
 }
 
@@ -15,10 +20,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Valyuta kurslari',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.teal)),
+      theme: _buildTheme(),
       home: const HomePage(),
     );
   }
+}
+
+ThemeData _buildTheme() {
+  final base = ThemeData(colorScheme: .fromSeed(seedColor: lapis));
+  return base.copyWith(textTheme: appTextTheme(base.textTheme));
 }
 
 /// Ma'lumot (ro'yxat, yuklanish, xato) shu yerda saqlanadi va
@@ -69,7 +79,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Valyuta kurslari')),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Valyuta kurslari',
+          style: displayFont(
+            Theme.of(context).textTheme.titleMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
       body: RatesScreen(
         currencies: _currencies,
         isLoading: _isLoading,

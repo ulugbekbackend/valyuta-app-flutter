@@ -39,9 +39,12 @@ void main() {
       ),
     );
 
-    expect(find.text('AQSH dollari'), findsOneWidget);
-    expect(find.text("11 772,95 so'm"), findsOneWidget);
-    expect(find.text('10 IDR'), findsOneWidget);
+    expect(find.text('1 AQSH dollari'), findsOneWidget); // taxtada
+    expect(
+      find.textContaining('11 772,95', findRichText: true),
+      findsOneWidget,
+    );
+    expect(find.text('10 IDR uchun'), findsOneWidget);
   });
 
   testWidgets('yuklanayotganda indikator chiqadi', (tester) async {
