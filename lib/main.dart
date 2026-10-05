@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
 
+import 'services/currency_service.dart';
+
 void main() {
   runApp(const MyApp());
+  _printRates(); // 1-faza: vaqtincha tekshiruv, keyin olib tashlanadi
+}
+
+Future<void> _printRates() async {
+  try {
+    final rates = await CurrencyService().fetchRates();
+    debugPrint('Yuklandi: ${rates.length} ta valyuta');
+    for (final currency in rates.take(5)) {
+      debugPrint(currency.toString());
+    }
+  } catch (e) {
+    debugPrint('Xato: $e');
+  }
 }
 
 class MyApp extends StatelessWidget {
