@@ -1,136 +1,80 @@
 import 'package:flutter/material.dart';
 
+import 'models/currency.dart';
+import 'screens/rates_screen.dart';
 import 'services/currency_service.dart';
 
 void main() {
   runApp(const MyApp());
-  _printRates(); // 1-faza: vaqtincha tekshiruv, keyin olib tashlanadi
-}
-
-Future<void> _printRates() async {
-  try {
-    final rates = await CurrencyService().fetchRates();
-    debugPrint('Yuklandi: ${rates.length} ta valyuta');
-    for (final currency in rates.take(5)) {
-      debugPrint(currency.toString());
-    }
-  } catch (e) {
-    debugPrint('Xato: $e');
-  }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Valyuta kurslari',
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.teal)),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+/// Ma'lumot (ro'yxat, yuklanish, xato) shu yerda saqlanadi va
+/// ekranlarga constructor orqali uzatiladi ("lifting state up").
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomePageState extends State<HomePage> {
+  final _service = CurrencyService();
 
-  void _incrementCounter() {
+  List<Currency> _currencies = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRates(); // ekran birinchi marta ochilganda (React: useEffect(..., []))
+  }
+
+  Future<void> _loadRates() async {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _isLoading = true;
+      _error = null;
     });
+
+    try {
+      final rates = await _service.fetchRates();
+      if (!mounted) return; // ekran yopilgan bo'lsa setState chaqirilmaydi
+      setState(() {
+        _currencies = sortCurrencies(rates);
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Kurslarni yuklashda xato: $e');
+      if (!mounted) return;
+      setState(() {
+        _error = "Kurslarni yuklab bo'lmadi.\nInternet aloqasini tekshiring.";
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      appBar: AppBar(title: const Text('Valyuta kurslari')),
+      body: RatesScreen(
+        currencies: _currencies,
+        isLoading: _isLoading,
+        error: _error,
+        onRetry: _loadRates,
       ),
     );
   }

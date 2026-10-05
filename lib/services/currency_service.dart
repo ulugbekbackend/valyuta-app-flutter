@@ -28,6 +28,20 @@ class CurrencyService {
   }
 }
 
+/// Eng ko'p ishlatiladigan valyutalar ro'yxat tepasida shu tartibda turadi.
+const pinnedCodes = ['USD', 'EUR', 'RUB'];
+
+/// Avval [pinnedCodes], qolganlari kod bo'yicha alifbo tartibida.
+List<Currency> sortCurrencies(List<Currency> currencies) {
+  final pinned = <Currency>[];
+  for (final code in pinnedCodes) {
+    pinned.addAll(currencies.where((c) => c.code == code));
+  }
+  final others = currencies.where((c) => !pinnedCodes.contains(c.code)).toList()
+    ..sort((a, b) => a.code.compareTo(b.code));
+  return [...pinned, ...others];
+}
+
 /// JSON matnni valyutalar ro'yxatiga aylantiradi.
 List<Currency> parseRates(String body) {
   final data = jsonDecode(body) as List<dynamic>;
