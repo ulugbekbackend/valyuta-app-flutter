@@ -23,7 +23,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Valyuta kurslari',
-      theme: _buildTheme(),
+      debugShowCheckedModeBanner: false,
+      // Och va to'q mavzu; qaysi biri — telefon/kompyuter sozlamasiga qarab.
+      theme: _buildTheme(Brightness.light),
+      darkTheme: _buildTheme(Brightness.dark),
+      themeMode: ThemeMode.system,
       // Web'da sichqoncha bilan ham ro'yxatni tortish (pull-to-refresh) mumkin.
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         dragDevices: PointerDeviceKind.values.toSet(),
@@ -33,8 +37,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
-ThemeData _buildTheme() {
-  final base = ThemeData(colorScheme: .fromSeed(seedColor: lapis));
+/// Material 3 mavzusi: barcha ranglar lojuvard ko'kdan hosil qilinadi.
+ThemeData _buildTheme(Brightness brightness) {
+  final base = ThemeData(
+    colorScheme: .fromSeed(seedColor: lapis, brightness: brightness),
+  );
   return base.copyWith(textTheme: appTextTheme(base.textTheme));
 }
 
@@ -90,8 +97,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
         _error = null;
       });
-    } catch (e) {
-      debugPrint('Kurslarni yuklashda xato: $e');
+    } catch (_) {
       if (!mounted) return;
       setState(() => _isLoading = false);
 

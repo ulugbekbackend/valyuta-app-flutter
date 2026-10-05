@@ -1,11 +1,11 @@
 {
-    "name": "valyuta_app",
-    "short_name": "valyuta_app",
+    "name": "Valyuta kurslari",
+    "short_name": "Valyuta",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#173F73",
+    "theme_color": "#173F73",
+    "description": "Markaziy bank rasmiy valyuta kurslari va konvertor.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -15,11 +15,14 @@ class ChangeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dark mode'da ham fon to'q — ochroq ranglar kerak.
+    final light = onDark || Theme.of(context).brightness == Brightness.dark;
+
     final Color color;
     if (diff > 0) {
-      color = onDark ? const Color(0xFF8BE3B2) : const Color(0xFF1B8A4F);
+      color = light ? const Color(0xFF8BE3B2) : const Color(0xFF1B8A4F);
     } else if (diff < 0) {
-      color = onDark ? const Color(0xFFFFA59B) : const Color(0xFFC0392B);
+      color = light ? const Color(0xFFFFA59B) : const Color(0xFFC0392B);
     } else {
       color = onDark
           ? Colors.white54

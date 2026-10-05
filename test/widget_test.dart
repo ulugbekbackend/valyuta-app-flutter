@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valyuta_app/models/currency.dart';
 import 'package:valyuta_app/screens/rates_screen.dart';
+import 'package:valyuta_app/widgets/change_text.dart';
 
 const _usd = Currency(
   code: 'USD',
@@ -130,5 +131,17 @@ void main() {
     await tester.pumpWidget(_screen(currencies: const []));
 
     expect(find.text("Hozircha kurslar yo'q."), findsOneWidget);
+  });
+
+  testWidgets("dark mode'da o'zgarish ranglari ochroq", (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(brightness: Brightness.dark),
+        home: const Scaffold(body: ChangeText(diff: -35.81)),
+      ),
+    );
+
+    final text = tester.widget<Text>(find.text('▼ 35,81'));
+    expect(text.style?.color, const Color(0xFFFFA59B));
   });
 }
