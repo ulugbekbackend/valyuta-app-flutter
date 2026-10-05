@@ -62,3 +62,6 @@ docs/
 CLAUDE.md
 CLAUDE.local.md
 .claude/
+
+# DevTools sozlamalari (avtomatik yaratiladi)
+devtools_options.yaml
