@@ -3,19 +3,62 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/currency.dart';
+import 'cache_service.dart';
+
+/// [CurrencyService.loadRates] natijasi: kurslar va ular qayerdan kelgani.
+class RatesResult {
+  const RatesResult({
+    required this.currencies,
+    required this.fromCache,
+    this.savedAt,
+  });
+
+  final List<Currency> currencies;
+
+  /// true — internet yo'q, keshdagi eski ma'lumot ko'rsatilmoqda.
+  final bool fromCache;
+
+  /// Keshdan bo'lsa — qachon saqlangani.
+  final DateTime? savedAt;
+}
 
 /// CBU (Markaziy bank) API'dan valyuta kurslarini yuklaydi.
 class CurrencyService {
-  /// [client] testlarda soxta (mock) client berish uchun.
-  CurrencyService({http.Client? client}) : _client = client ?? http.Client();
+  /// [client] va [cache] testlarda soxta (mock) qiymat berish uchun.
+  CurrencyService({http.Client? client, CacheService? cache})
+    : _client = client ?? http.Client(),
+      _cache = cache ?? CacheService();
 
   static final Uri _url = Uri.parse(
     'https://cbu.uz/uz/arkhiv-kursov-valyut/json/',
   );
 
   final http.Client _client;
+  final CacheService _cache;
 
-  Future<List<Currency>> fetchRates() async {
+  /// Faqat internetdan (keshsiz).
+  Future<List<Currency>> fetchRates() async => parseRates(await _fetchBody());
+
+  /// Avval internetdan; muvaffaqiyatli bo'lsa keshga yozadi.
+  /// Internet ishlamasa — keshdan. Kesh ham bo'lmasa — xato.
+  Future<RatesResult> loadRates() async {
+    try {
+      final body = await _fetchBody();
+      final currencies = parseRates(body); // avval tekshiramiz, keyin saqlaymiz
+      await _cache.saveRates(body);
+      return RatesResult(currencies: currencies, fromCache: false);
+    } catch (networkError) {
+      final cached = await _cache.loadRates();
+      if (cached == null) rethrow; // ko'rsatadigan hech narsa yo'q
+      return RatesResult(
+        currencies: parseRates(cached.body),
+        fromCache: true,
+        savedAt: cached.savedAt,
+      );
+    }
+  }
+
+  Future<String> _fetchBody() async {
     final response = await _client
         .get(_url)
         .timeout(const Duration(seconds: 15));
@@ -24,7 +67,7 @@ class CurrencyService {
       throw Exception('Server xatosi: ${response.statusCode}');
     }
     // Server charset yubormaydi, shuning uchun UTF-8 ni o'zimiz belgilaymiz.
-    return parseRates(utf8.decode(response.bodyBytes));
+    return utf8.decode(response.bodyBytes);
   }
 }
 

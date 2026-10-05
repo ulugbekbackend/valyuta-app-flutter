@@ -7,6 +7,7 @@ import 'screens/rates_screen.dart';
 import 'services/currency_service.dart';
 import 'utils/fonts.dart';
 import 'widgets/koshin.dart' show lapis;
+import 'widgets/offline_banner.dart';
 
 Future<void> main() async {
   // runApp'dan oldin async ish qilish uchun Flutter'ni tayyorlaymiz.
@@ -40,19 +41,26 @@ ThemeData _buildTheme() {
 /// Ma'lumot (ro'yxat, yuklanish, xato) shu yerda saqlanadi va
 /// ekranlarga constructor orqali uzatiladi ("lifting state up").
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  /// [service] testlarda soxta servis berish uchun.
+  const HomePage({super.key, this.service});
+
+  final CurrencyService? service;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final _service = CurrencyService();
+  late final _service = widget.service ?? CurrencyService();
 
   List<Currency> _currencies = [];
   bool _isLoading = true;
   String? _error;
   int _tab = 0; // 0 — Kurslar, 1 — Konvertor
+
+  /// Keshdagi ma'lumot ko'rsatilayotgan bo'lsa — qachon saqlangani.
+  /// null — ma'lumot internetdan, yangi.
+  DateTime? _offlineSince;
 
   @override
   void initState() {
@@ -74,10 +82,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetch() async {
     try {
-      final rates = await _service.fetchRates();
+      final result = await _service.loadRates();
       if (!mounted) return; // ekran yopilgan bo'lsa setState chaqirilmaydi
       setState(() {
-        _currencies = sortCurrencies(rates);
+        _currencies = sortCurrencies(result.currencies);
+        _offlineSince = result.fromCache ? result.savedAt : null;
         _isLoading = false;
         _error = null;
       });
@@ -115,22 +124,31 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      // IndexedStack ikkala ekranni ham saqlab turadi, faqat bittasini
-      // ko'rsatadi — tab almashganda qidiruv va kiritilgan summa yo'qolmaydi.
-      body: IndexedStack(
-        index: _tab,
+      body: Column(
         children: [
-          RatesScreen(
-            currencies: _currencies,
-            isLoading: _isLoading,
-            error: _error,
-            onRetry: _loadRates,
-            onRefresh: _refresh,
-          ),
-          ConverterScreen(
-            currencies: _currencies,
-            isLoading: _isLoading,
-            onRetry: _loadRates,
+          // Offline bo'lsa — ikkala tab tepasida ham ko'rinadi.
+          if (_offlineSince != null)
+            OfflineBanner(savedAt: _offlineSince!, onRetry: _refresh),
+          Expanded(
+            // IndexedStack ikkala ekranni ham saqlab turadi, faqat bittasini
+            // ko'rsatadi — tab almashganda qidiruv va summa yo'qolmaydi.
+            child: IndexedStack(
+              index: _tab,
+              children: [
+                RatesScreen(
+                  currencies: _currencies,
+                  isLoading: _isLoading,
+                  error: _error,
+                  onRetry: _loadRates,
+                  onRefresh: _refresh,
+                ),
+                ConverterScreen(
+                  currencies: _currencies,
+                  isLoading: _isLoading,
+                  onRetry: _loadRates,
+                ),
+              ],
+            ),
           ),
         ],
       ),
