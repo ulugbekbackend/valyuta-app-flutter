@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/currency.dart';
 import '../utils/fonts.dart';
 import '../utils/formatters.dart';
+import 'change_text.dart';
 
 // Samarqand koshinlaridan olingan ranglar.
 const lapis = Color(0xFF173F73); // lojuvard ko'k
@@ -75,6 +76,7 @@ class RatesHeader extends StatelessWidget {
                   ),
                 ),
               ),
+              ChangeText(diff: main.diff, onDark: true),
               const SizedBox(height: 16),
               Container(height: 2, width: 48, color: _gold),
               const SizedBox(height: 16),
@@ -102,6 +104,7 @@ class RatesHeader extends StatelessWidget {
                             ),
                           ),
                         ),
+                        ChangeText(diff: c.diff, onDark: true),
                       ],
                     ),
                 ],

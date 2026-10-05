@@ -8,10 +8,10 @@ String formatRate(double value) {
   return _number.format(value).replaceAll(',', ' ').replaceAll('.', ',');
 }
 
-/// -35.81 → "-35,81", 35.81 → "+35,81", 0 → "0,00".
-String formatDiff(double value) {
+/// Kunlik o'zgarish: 35.81 → "▲ 35,81", -35.81 → "▼ 35,81", 0 → "0,00".
+String formatChange(double value) {
   final text = formatRate(value.abs());
-  if (value > 0) return '+$text';
-  if (value < 0) return '-$text';
+  if (value > 0) return '▲ $text';
+  if (value < 0) return '▼ $text';
   return text;
 }

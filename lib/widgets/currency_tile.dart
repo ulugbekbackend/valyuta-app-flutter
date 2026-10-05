@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/currency.dart';
 import '../utils/fonts.dart';
 import '../utils/formatters.dart';
+import 'change_text.dart';
 
 /// Ro'yxatdagi bitta qator: kod, nom va kurs.
 class CurrencyTile extends StatelessWidget {
@@ -57,15 +58,21 @@ class CurrencyTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          // Kurs — tabular raqamlar, ustunda tekis turadi
-          Text(
-            formatRate(currency.rate),
-            style: bodyFont(
-              textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontFeatures: const [FontFeature.tabularFigures()],
+          // Kurs va kunlik o'zgarish — tabular raqamlar, ustunda tekis turadi
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                formatRate(currency.rate),
+                style: bodyFont(
+                  textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
               ),
-            ),
+              ChangeText(diff: currency.diff),
+            ],
           ),
         ],
       ),

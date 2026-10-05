@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 
 import 'models/currency.dart';
 import 'screens/rates_screen.dart';
@@ -21,6 +22,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Valyuta kurslari',
       theme: _buildTheme(),
+      // Web'da sichqoncha bilan ham ro'yxatni tortish (pull-to-refresh) mumkin.
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: PointerDeviceKind.values.toSet(),
+      ),
       home: const HomePage(),
     );
   }
@@ -53,26 +58,45 @@ class _HomePageState extends State<HomePage> {
     _loadRates(); // ekran birinchi marta ochilganda (React: useEffect(..., []))
   }
 
+  /// Birinchi yuklash va "Qayta urinish": butun ekranda indikator.
   Future<void> _loadRates() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
+    await _fetch();
+  }
 
+  /// Pull-to-refresh: ro'yxat joyida qoladi, faqat tepada indikator.
+  Future<void> _refresh() => _fetch();
+
+  Future<void> _fetch() async {
     try {
       final rates = await _service.fetchRates();
       if (!mounted) return; // ekran yopilgan bo'lsa setState chaqirilmaydi
       setState(() {
         _currencies = sortCurrencies(rates);
         _isLoading = false;
+        _error = null;
       });
     } catch (e) {
       debugPrint('Kurslarni yuklashda xato: $e');
       if (!mounted) return;
-      setState(() {
-        _error = "Kurslarni yuklab bo'lmadi.\nInternet aloqasini tekshiring.";
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
+
+      if (_currencies.isEmpty) {
+        // Ko'rsatadigan hech narsa yo'q — xato ekrani.
+        setState(() {
+          _error = "Kurslarni yuklab bo'lmadi.\nInternet aloqasini tekshiring.";
+        });
+      } else {
+        // Eski ma'lumot ekranda qoladi, pastda qisqa xabar.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Yangilab bo'lmadi. Internet aloqasini tekshiring."),
+          ),
+        );
+      }
     }
   }
 
@@ -94,6 +118,7 @@ class _HomePageState extends State<HomePage> {
         isLoading: _isLoading,
         error: _error,
         onRetry: _loadRates,
+        onRefresh: _refresh,
       ),
     );
   }

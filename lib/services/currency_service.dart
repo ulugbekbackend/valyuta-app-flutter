@@ -42,6 +42,24 @@ List<Currency> sortCurrencies(List<Currency> currencies) {
   return [...pinned, ...others];
 }
 
+/// Kod yoki o'zbekcha nom bo'yicha qidiradi (katta-kichik harf farqsiz).
+/// Bo'sh so'rov bo'lsa, hammasini qaytaradi.
+List<Currency> filterCurrencies(List<Currency> currencies, String query) {
+  final q = _normalize(query);
+  if (q.isEmpty) return currencies;
+  return currencies
+      .where(
+        (c) =>
+            _normalize(c.code).contains(q) || _normalize(c.nameUz).contains(q),
+      )
+      .toList();
+}
+
+/// API nomlarda "ʻ" (Afgʻoniston) ishlatadi, foydalanuvchi esa odatda "'"
+/// yozadi — ikkalasini bir xil deb hisoblaymiz.
+String _normalize(String text) =>
+    text.trim().toLowerCase().replaceAll(RegExp('[ʻʼ‘’`]'), "'");
+
 /// JSON matnni valyutalar ro'yxatiga aylantiradi.
 List<Currency> parseRates(String body) {
   final data = jsonDecode(body) as List<dynamic>;

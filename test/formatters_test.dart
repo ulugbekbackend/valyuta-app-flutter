@@ -27,11 +27,11 @@ void main() {
     });
   });
 
-  group('formatDiff', () {
-    test('ishorani ko\'rsatadi', () {
-      expect(formatDiff(35.81), '+35,81');
-      expect(formatDiff(-179.57), '-179,57');
-      expect(formatDiff(0), '0,00');
+  group('formatChange', () {
+    test('o\'sish ▲, tushish ▼, o\'zgarmagan — belgisiz', () {
+      expect(formatChange(35.81), '▲ 35,81');
+      expect(formatChange(-179.57), '▼ 179,57');
+      expect(formatChange(0), '0,00');
     });
   });
 
@@ -51,4 +51,48 @@ void main() {
       expect(sorted, ['AED', 'JPY']);
     });
   });
+
+  group('filterCurrencies', () {
+    final list = [
+      _named('USD', 'AQSH dollari'),
+      _named('AUD', 'Avstraliya dollari'),
+      _named('RUB', 'Rossiya rubli'),
+      _named('AFN', 'Afgʻoniston afgʻonisi'), // API'dagi "ʻ" belgisi
+    ];
+    List<String> codes(String q) =>
+        filterCurrencies(list, q).map((c) => c.code).toList();
+
+    test('bo\'sh so\'rov — hammasi', () {
+      expect(codes(''), ['USD', 'AUD', 'RUB', 'AFN']);
+      expect(codes('   '), ['USD', 'AUD', 'RUB', 'AFN']);
+    });
+
+    test('kod bo\'yicha, katta-kichik harf farqsiz', () {
+      expect(codes('usd'), ['USD']);
+      expect(codes('RU'), ['RUB']);
+    });
+
+    test('nom bo\'yicha', () {
+      expect(codes('dollar'), ['USD', 'AUD']);
+      expect(codes(' Rubl '), ['RUB']);
+    });
+
+    test('oddiy apostrof "ʻ" bilan ham topadi', () {
+      expect(codes("afg'on"), ['AFN']);
+    });
+
+    test('mos kelmasa — bo\'sh', () {
+      expect(codes('xyz'), isEmpty);
+    });
+  });
 }
+
+Currency _named(String code, String nameUz) => Currency(
+  code: code,
+  nameUz: nameUz,
+  nameEn: code,
+  nominal: 1,
+  rate: 1,
+  diff: 0,
+  date: '03.10.2026',
+);
