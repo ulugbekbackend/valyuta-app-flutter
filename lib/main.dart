@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'models/currency.dart';
 import 'screens/converter_screen.dart';
@@ -17,13 +18,20 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  /// [service] testlarda soxta servis berish uchun.
+  const MyApp({super.key, this.service});
+
+  final CurrencyService? service;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Valyuta kurslari',
       debugShowCheckedModeBanner: false,
+      // Flutter'ning ichki matnlari ham o'zbekcha: "Nusxa olish", "Joylash"...
+      locale: const Locale('uz'),
+      supportedLocales: const [Locale('uz')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       // Och va to'q mavzu; qaysi biri — telefon/kompyuter sozlamasiga qarab.
       theme: _buildTheme(Brightness.light),
       darkTheme: _buildTheme(Brightness.dark),
@@ -32,7 +40,7 @@ class MyApp extends StatelessWidget {
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         dragDevices: PointerDeviceKind.values.toSet(),
       ),
-      home: const HomePage(),
+      home: HomePage(service: service),
     );
   }
 }

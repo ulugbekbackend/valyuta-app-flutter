@@ -38,6 +38,8 @@ dependencies:
   intl: ^0.20.3
   google_fonts: ^9.0.0
   shared_preferences: ^2.5.5
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

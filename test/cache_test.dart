@@ -130,4 +130,14 @@ void main() {
       expect(find.text('Berasiz'), findsOneWidget);
     });
   });
+  testWidgets("ilova tili o'zbekcha", (tester) async {
+    final service = CurrencyService(client: _okClient());
+
+    await tester.pumpWidget(MyApp(service: service));
+    await tester.pumpAndSettle();
+
+    final context = tester.element(find.byType(HomePage));
+    expect(Localizations.localeOf(context), const Locale('uz'));
+    expect(MaterialLocalizations.of(context).copyButtonLabel, 'Nusxa olish');
+  });
 }
