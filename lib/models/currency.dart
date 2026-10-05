@@ -38,6 +38,13 @@ class Currency {
   /// 1 birlik valyutaning so'mdagi narxi.
   double get ratePerUnit => rate / nominal;
 
+  /// Valyuta → so'm. Masalan 100 USD → 1 177 295 so'm.
+  /// Nominal hisobga olinadi: IDR kursi 10 birlik uchun berilgan.
+  double toUzs(double amount) => amount * rate / nominal;
+
+  /// So'm → valyuta. Kurs 0 bo'lsa (buzilgan ma'lumot) 0 qaytaradi.
+  double fromUzs(double amount) => rate == 0 ? 0 : amount * nominal / rate;
+
   @override
   String toString() => 'Currency($code, $nominal = $rate UZS, diff: $diff)';
 }

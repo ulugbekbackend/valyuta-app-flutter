@@ -4,6 +4,7 @@ import '../models/currency.dart';
 import '../services/currency_service.dart';
 import '../utils/fonts.dart';
 import '../widgets/currency_tile.dart';
+import '../widgets/message_view.dart';
 import '../widgets/rates_header.dart';
 
 /// Kurslar ro'yxati. Ma'lumotni o'zi yuklamaydi — ota widget (HomePage)
@@ -54,7 +55,7 @@ class _RatesScreenState extends State<RatesScreen> {
     }
 
     if (widget.error != null) {
-      return _Message(
+      return MessageView(
         icon: Icons.cloud_off,
         text: widget.error!,
         action: FilledButton(
@@ -65,7 +66,7 @@ class _RatesScreenState extends State<RatesScreen> {
     }
 
     if (widget.currencies.isEmpty) {
-      return _Message(
+      return MessageView(
         icon: Icons.inbox_outlined,
         text: "Hozircha kurslar yo'q.",
         action: FilledButton(
@@ -188,7 +189,7 @@ class _RatesScreenState extends State<RatesScreen> {
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
           const SizedBox(height: 48),
-          _Message(
+          MessageView(
             icon: Icons.search_off,
             text: "“${_query.trim()}” bo'yicha hech narsa topilmadi.",
             action: TextButton(
@@ -207,38 +208,6 @@ class _RatesScreenState extends State<RatesScreen> {
       separatorBuilder: (context, index) =>
           const Divider(height: 1, indent: 24, endIndent: 24),
       itemBuilder: (context, index) => CurrencyTile(currency: results[index]),
-    );
-  }
-}
-
-/// Markazdagi xabar: ikonka, matn va tugma (xato / bo'sh holatlar uchun).
-class _Message extends StatelessWidget {
-  const _Message({
-    required this.icon,
-    required this.text,
-    required this.action,
-  });
-
-  final IconData icon;
-  final String text;
-  final Widget action;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 48),
-            const SizedBox(height: 12),
-            Text(text, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            action,
-          ],
-        ),
-      ),
     );
   }
 }

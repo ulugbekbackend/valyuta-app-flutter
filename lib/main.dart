@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 
 import 'models/currency.dart';
+import 'screens/converter_screen.dart';
 import 'screens/rates_screen.dart';
 import 'services/currency_service.dart';
 import 'utils/fonts.dart';
-import 'widgets/rates_header.dart' show lapis;
+import 'widgets/koshin.dart' show lapis;
 
 Future<void> main() async {
   // runApp'dan oldin async ish qilish uchun Flutter'ni tayyorlaymiz.
@@ -51,6 +52,7 @@ class _HomePageState extends State<HomePage> {
   List<Currency> _currencies = [];
   bool _isLoading = true;
   String? _error;
+  int _tab = 0; // 0 — Kurslar, 1 — Konvertor
 
   @override
   void initState() {
@@ -106,19 +108,45 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Valyuta kurslari',
+          _tab == 0 ? 'Valyuta kurslari' : 'Konvertor',
           style: displayFont(
             Theme.of(context).textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ),
-      body: RatesScreen(
-        currencies: _currencies,
-        isLoading: _isLoading,
-        error: _error,
-        onRetry: _loadRates,
-        onRefresh: _refresh,
+      // IndexedStack ikkala ekranni ham saqlab turadi, faqat bittasini
+      // ko'rsatadi — tab almashganda qidiruv va kiritilgan summa yo'qolmaydi.
+      body: IndexedStack(
+        index: _tab,
+        children: [
+          RatesScreen(
+            currencies: _currencies,
+            isLoading: _isLoading,
+            error: _error,
+            onRetry: _loadRates,
+            onRefresh: _refresh,
+          ),
+          ConverterScreen(
+            currencies: _currencies,
+            isLoading: _isLoading,
+            onRetry: _loadRates,
+          ),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tab,
+        onDestinationSelected: (index) => setState(() => _tab = index),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.format_list_bulleted),
+            label: 'Kurslar',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.currency_exchange),
+            label: 'Konvertor',
+          ),
+        ],
       ),
     );
   }
