@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.valyuta_app"
+    namespace = "uz.ulugbekdev.valyuta"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

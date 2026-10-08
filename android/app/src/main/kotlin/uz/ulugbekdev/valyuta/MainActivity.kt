@@ -1,4 +1,4 @@
-package com.example.valyuta_app
+package uz.ulugbekdev.valyuta
 
 import io.flutter.embedding.android.FlutterActivity
 
