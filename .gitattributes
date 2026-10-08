@@ -1,0 +1,7 @@
+# Barcha matn fayllari repo'da va diskda LF bilan saqlanadi
+# (Windows'dagi core.autocrlf sabab "soxta o'zgarishlar" chiqmasligi uchun)
+* text=auto eol=lf
+
+# Windows skriptlari CRLF talab qiladi
+*.bat text eol=crlf
+*.cmd text eol=crlf
