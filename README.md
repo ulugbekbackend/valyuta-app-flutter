@@ -87,6 +87,10 @@ Arxitektura sodda: barcha ma'lumot (kurslar, yuklanish, xato, offline) bitta `Ho
 - Valyuta kurslari: [O'zbekiston Respublikasi Markaziy banki](https://cbu.uz).
 - Shriftlar: [IBM Plex Sans](https://github.com/IBM/plex) va [Unbounded](https://github.com/googlefonts/unbounded), ikkalasi ham SIL Open Font License 1.1 litsenziyasi ostida.
 
+### Litsenziya
+
+Loyiha [MIT litsenziyasi](LICENSE) ostida tarqatiladi.
+
 ---
 
 ## English
@@ -160,3 +164,7 @@ All app state (rates, loading, error, offline) lives in one `HomePage` widget an
 
 - Exchange rates: [Central Bank of the Republic of Uzbekistan](https://cbu.uz).
 - Fonts: [IBM Plex Sans](https://github.com/IBM/plex) and [Unbounded](https://github.com/googlefonts/unbounded), both licensed under the SIL Open Font License 1.1.
+
+### License
+
+This project is licensed under the [MIT License](LICENSE).
