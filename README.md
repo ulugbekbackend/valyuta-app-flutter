@@ -19,22 +19,13 @@ O'zbekiston Respublikasi Markaziy banki (CBU) rasmiy valyuta kurslarini ko'rsata
 - **Dizayn.** Material 3, och va to'q mavzu (tizimga qarab). Samarqand koshinlaridan ilhomlangan ranglar: lojuvard, firuza va zarhal.
 - **To'liq o'zbekcha interfeys**, Flutter'ning ichki matnlari ham.
 
-### Skrinshotlar
-
-| Kurslar | Konvertor | Dark mode | Offline |
-|---|---|---|---|
-| _(rasm qo'shiladi)_ | _(rasm qo'shiladi)_ | _(rasm qo'shiladi)_ | _(rasm qo'shiladi)_ |
-
-<!-- Rasmlarni screenshots/ papkasiga qo'yib, yuqoridagi jadvalga
-     ![Kurslar](screenshots/rates.png) ko'rinishida qo'shing. -->
-
 ### Ishga tushirish
 
-Talablar: Flutter 3.47+ (Dart 3.13+) va Chrome.
+Talablar: Flutter 3.47+ (Dart 3.13+) va Chrome. Android uchun qo'shimcha ravishda Android SDK kerak.
 
 ```bash
-git clone <repo-url>
-cd valyuta_app
+git clone https://github.com/ulugbekbackend/valyuta-app-flutter.git
+cd valyuta-app-flutter
 flutter pub get
 flutter run -d chrome
 ```
@@ -42,9 +33,10 @@ flutter run -d chrome
 Boshqa buyruqlar:
 
 ```bash
-flutter test               # barcha testlar (48 ta)
-flutter analyze            # kod tahlili (lint)
-flutter build web          # production build → build/web
+flutter test                  # barcha testlar (48 ta)
+flutter analyze               # kod tahlili (lint)
+flutter build web             # production build → build/web
+flutter build apk --release   # Android APK → build/app/outputs/flutter-apk/
 ```
 
 Ma'lumotlar manbai: `https://cbu.uz/uz/arkhiv-kursov-valyut/json/`. API kaliti kerak emas.
@@ -90,6 +82,11 @@ Arxitektura sodda: barcha ma'lumot (kurslar, yuklanish, xato, offline) bitta `Ho
   - Har bir qalinlik (bold, semibold) uchun alohida fayl kerak.
 - **Mavzu.** `ColorScheme.fromSeed` bitta rangdan butun och va to'q palitrani yasaydi.
 
+### Manbalar
+
+- Valyuta kurslari: [O'zbekiston Respublikasi Markaziy banki](https://cbu.uz).
+- Shriftlar: [IBM Plex Sans](https://github.com/IBM/plex) va [Unbounded](https://github.com/googlefonts/unbounded), ikkalasi ham SIL Open Font License 1.1 litsenziyasi ostida.
+
 ---
 
 ## English
@@ -107,19 +104,13 @@ A Flutter app that shows the official exchange rates of the Central Bank of Uzbe
 - **Design.** Material 3 with light and dark themes that follow the system setting. The palette comes from Samarkand tilework: lapis, turquoise and gold.
 - **Fully Uzbek UI**, including Flutter's built-in strings.
 
-### Screenshots
-
-| Rates | Converter | Dark mode | Offline |
-|---|---|---|---|
-| _(coming soon)_ | _(coming soon)_ | _(coming soon)_ | _(coming soon)_ |
-
 ### Getting started
 
-Requirements: Flutter 3.47+ (Dart 3.13+) and Chrome.
+Requirements: Flutter 3.47+ (Dart 3.13+) and Chrome. Building for Android also needs the Android SDK.
 
 ```bash
-git clone <repo-url>
-cd valyuta_app
+git clone https://github.com/ulugbekbackend/valyuta-app-flutter.git
+cd valyuta-app-flutter
 flutter pub get
 flutter run -d chrome
 ```
@@ -127,9 +118,10 @@ flutter run -d chrome
 Other commands:
 
 ```bash
-flutter test               # all tests (48)
-flutter analyze            # static analysis (lint)
-flutter build web          # production build → build/web
+flutter test                  # all tests (48)
+flutter analyze               # static analysis (lint)
+flutter build web             # production build → build/web
+flutter build apk --release   # Android APK → build/app/outputs/flutter-apk/
 ```
 
 Data source: `https://cbu.uz/uz/arkhiv-kursov-valyut/json/`. No API key is needed.
