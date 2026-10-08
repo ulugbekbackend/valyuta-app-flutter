@@ -19,6 +19,13 @@ O'zbekiston Respublikasi Markaziy banki (CBU) rasmiy valyuta kurslarini ko'rsata
 - **Dizayn.** Material 3, och va to'q mavzu (tizimga qarab). Samarqand koshinlaridan ilhomlangan ranglar: lojuvard, firuza va zarhal.
 - **To'liq o'zbekcha interfeys**, Flutter'ning ichki matnlari ham.
 
+### Skrinshotlar
+
+| Kurslar | Konvertor | Offline |
+|---|---|---|
+| ![Kurslar](screenshots/rates.jpg) | ![Konvertor](screenshots/converter.jpg) | ![Offline](screenshots/offline.jpg) |
+| ![Kurslar, dark mode](screenshots/dark-rates.jpg) | ![Konvertor, dark mode](screenshots/dark-converter.jpg) | ![Offline, dark mode](screenshots/dark-offline.jpg) |
+
 ### Ishga tushirish
 
 Talablar: Flutter 3.47+ (Dart 3.13+) va Chrome. Android uchun qo'shimcha ravishda Android SDK kerak.
@@ -107,6 +114,13 @@ A Flutter app that shows the official exchange rates of the Central Bank of Uzbe
 - **Offline mode.** The last successful response is cached. Without internet the cached rates are shown under an "Offline" banner.
 - **Design.** Material 3 with light and dark themes that follow the system setting. The palette comes from Samarkand tilework: lapis, turquoise and gold.
 - **Fully Uzbek UI**, including Flutter's built-in strings.
+
+### Screenshots
+
+| Rates | Converter | Offline |
+|---|---|---|
+| ![Rates](screenshots/rates.jpg) | ![Converter](screenshots/converter.jpg) | ![Offline](screenshots/offline.jpg) |
+| ![Rates, dark mode](screenshots/dark-rates.jpg) | ![Converter, dark mode](screenshots/dark-converter.jpg) | ![Offline, dark mode](screenshots/dark-offline.jpg) |
 
 ### Getting started
 
